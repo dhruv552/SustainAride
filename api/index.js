@@ -196,8 +196,25 @@ app.use((err, req, res, next) => {
 // Vercel serverless function handler
 module.exports = async (req, res) => {
   try {
+    // Set CORS headers for preflight requests
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+    );
+
+    // Handle preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+
     // Ensure database connection before handling request
     await connectDB();
+    
+    // Pass request to Express app
     return app(req, res);
   } catch (error) {
     console.error('Failed to connect to database:', error.message);
