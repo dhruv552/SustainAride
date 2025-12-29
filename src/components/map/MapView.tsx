@@ -12,6 +12,7 @@ import 'leaflet-routing-machine';
 import { MapPin, Navigation } from 'lucide-react';
 
 // Fix for Leaflet default icon issue in React
+// @ts-ignore - _getIconUrl is a private property
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -58,8 +59,14 @@ const RoutingMachine = ({
       map.removeControl((map as any)._routingControl);
     }
 
+    // Check if L.Routing is available
+    if (!(L as any).Routing) {
+      console.error('Leaflet Routing Machine not loaded');
+      return;
+    }
+
     // Create the routing control
-    const routingControl = L.Routing.control({
+    const routingControl = (L as any).Routing.control({
       waypoints: [
         L.latLng(sourceLocation.lat, sourceLocation.lng),
         L.latLng(destinationLocation.lat, destinationLocation.lng)
@@ -78,7 +85,7 @@ const RoutingMachine = ({
     }).addTo(map);
 
     // Add route calculation event handler
-    routingControl.on('routesfound', (e) => {
+    routingControl.on('routesfound', (e: any) => {
       const routes = e.routes;
       if (routes && routes.length > 0) {
         const route = routes[0]; // Get the first (best) route

@@ -63,7 +63,7 @@ const EmergencyPollutionMode: React.FC = () => {
   }, [isVisible]);
 
   const handleClaimBonus = async () => {
-    if (!user?.id) {
+    if (!user?._id) {
       alert('You must be logged in to claim bonus points.');
       return;
     }
@@ -71,7 +71,7 @@ const EmergencyPollutionMode: React.FC = () => {
     try {
       setClaimingBonus(true);
       await apiClient.post('/api/rewards/claim-eco-bonus', {
-        userId: user.id,
+        userId: user._id,
         timestamp: new Date().toISOString(),
         actionType: 'pollution_alert_opt_in'
       });

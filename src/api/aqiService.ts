@@ -22,6 +22,11 @@ class SimpleEventEmitter {
       setTimeout(() => callback(data), 0);
     });
   }
+
+  // Add public method to get events
+  getEvents(): { [key: string]: Array<(data: any) => void> } {
+    return this.events;
+  }
 }
 
 interface AQIResponse {
@@ -233,9 +238,10 @@ class AQIService {
     
     // Make sure all subscribers get this update immediately
     try {
-      if (this.emitter.events && this.emitter.events['aqi-update'] && this.emitter.events['aqi-update'].length > 0) {
-        console.log('Found subscribers to notify:', this.emitter.events['aqi-update'].length);
-        this.emitter.events['aqi-update'].forEach(callback => {
+      const events = this.emitter.getEvents();
+      if (events && events['aqi-update'] && events['aqi-update'].length > 0) {
+        console.log('Found subscribers to notify:', events['aqi-update'].length);
+        events['aqi-update'].forEach(callback => {
           // Call directly instead of using setTimeout to ensure immediate execution
           callback(testData);
         });
