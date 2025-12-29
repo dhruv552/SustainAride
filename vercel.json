@@ -1,13 +1,7 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.cjs"
-    }
-  ],
   "functions": {
-    "api/index.cjs": {
+    "api/**/*.cjs": {
       "maxDuration": 10
     }
   }
