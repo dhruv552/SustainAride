@@ -1,13 +1,23 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-// API base URL - correct base URL without /api suffix since routes already include it
-const API_URL = 'http://localhost:5000';
+// API base URL - automatically detects environment
+const getApiUrl = () => {
+  // In production (Vercel), use the same domain
+  if (import.meta.env.PROD) {
+    return window.location.origin;
+  }
+  // In development, use localhost backend
+  return import.meta.env.VITE_API_URL || 'http://localhost:5000';
+};
+
+const API_URL = getApiUrl();
 
 /**
  * Base API client for making HTTP requests to the backend
  */
 class ApiClient {
     private client: AxiosInstance;
+    private healthCheckInterval: NodeJS.Timeout | null = null;
 
     constructor() {
         this.client = axios.create({
@@ -15,8 +25,8 @@ class ApiClient {
             headers: {
                 'Content-Type': 'application/json',
             },
-            // Add timeout to prevent hanging requests
-            timeout: 10000,
+            timeout: 30000, // Increased timeout for serverless cold starts
+            withCredentials: true,
         });
 
         // Add request interceptor to include auth token
@@ -56,9 +66,14 @@ class ApiClient {
                     }
                 }
 
+                // Handle rate limiting (429)
+                if (error.response && error.response.status === 429) {
+                    error.message = 'Too many requests. Please try again later.';
+                }
+
                 // Handle server connection errors (no response from server)
                 if (!error.response) {
-                    error.message = 'Cannot connect to server. Please check if the server is running.';
+                    error.message = 'Cannot connect to server. Please check your internet connection.';
                 }
                 // Enhance error object with more detailed message from the response if available
                 else if (error.response && error.response.data) {
@@ -74,6 +89,48 @@ class ApiClient {
                 return Promise.reject(error);
             }
         );
+
+        // Start health check monitoring
+        this.startHealthCheck();
+    }
+
+    /**
+     * Start periodic health checks to ensure backend is awake (prevents cold starts)
+     */
+    private startHealthCheck() {
+        // Only in production to keep serverless functions warm
+        if (import.meta.env.PROD) {
+            this.healthCheckInterval = setInterval(async () => {
+                try {
+                    await this.get('/api/health');
+                } catch (error) {
+                    console.warn('Health check failed:', error);
+                }
+            }, 5 * 60 * 1000); // Every 5 minutes
+        }
+    }
+
+    /**
+     * Stop health check monitoring
+     */
+    public stopHealthCheck() {
+        if (this.healthCheckInterval) {
+            clearInterval(this.healthCheckInterval);
+            this.healthCheckInterval = null;
+        }
+    }
+
+    /**
+     * Check if backend is connected
+     */
+    async checkConnection(): Promise<boolean> {
+        try {
+            await this.get('/api/health');
+            return true;
+        } catch (error) {
+            console.error('Backend connection check failed:', error);
+            return false;
+        }
     }
 
     /**
@@ -123,8 +180,19 @@ class ApiClient {
             throw error;
         }
     }
+
+    /**
+     * Get current API URL
+     */
+    public getBaseUrl(): string {
+        return API_URL;
+    }
 }
 
 // Create a singleton instance
 const apiClient = new ApiClient();
+
+// Log API URL on initialization
+console.log('API Client initialized with base URL:', apiClient.getBaseUrl());
+
 export default apiClient;
