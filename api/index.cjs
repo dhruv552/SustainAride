@@ -5,13 +5,13 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 
-// Import routes
-const authRoutes = require('../server/routes/authRoutes.cjs');
-const userRoutes = require('../server/routes/userRoutes.cjs');
-const rideRoutes = require('../server/routes/rideRoutes.cjs');
-const couponRoutes = require('../server/routes/couponRoutes.cjs');
-const rewardRoutes = require('../server/routes/rewardRoutes.cjs');
-const aqiRoutes = require('../server/routes/aqiRoutes.cjs');
+// Import routes - now using local paths
+const authRoutes = require('./server/routes/authRoutes.cjs');
+const userRoutes = require('./server/routes/userRoutes.cjs');
+const rideRoutes = require('./server/routes/rideRoutes.cjs');
+const couponRoutes = require('./server/routes/couponRoutes.cjs');
+const rewardRoutes = require('./server/routes/rewardRoutes.cjs');
+const aqiRoutes = require('./server/routes/aqiRoutes.cjs');
 
 const app = express();
 
