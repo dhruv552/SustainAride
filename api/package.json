@@ -1,7 +1,7 @@
 {
   "name": "sustainaride-api",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "express": "^5.1.0",
     "cors": "^2.8.5",
