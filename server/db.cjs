@@ -15,23 +15,35 @@ if (!uri) {
 
 // Connection options
 const options = {
-    serverSelectionTimeoutMS: 5000,
+    serverSelectionTimeoutMS: 10000,
     connectTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
 };
 
 // Create MongoDB connection
 const connectDB = async () => {
     try {
+        console.log('Attempting to connect to MongoDB...');
         await mongoose.connect(uri, options);
-        console.log('MongoDB connected successfully');
+        console.log('✓ MongoDB connected successfully');
 
         // Log database name and host for confirmation
-        const { host, port, name } = mongoose.connection;
-        console.log(`Connected to database: ${name} at ${host}:${port || 'default'}`);
+        const { host, name } = mongoose.connection;
+        console.log(`✓ Connected to database: ${name} at ${host}`);
+
+        // Handle connection events
+        mongoose.connection.on('error', (err) => {
+            console.error('MongoDB connection error:', err);
+        });
+
+        mongoose.connection.on('disconnected', () => {
+            console.log('MongoDB disconnected');
+        });
 
         return mongoose.connection;
     } catch (error) {
         console.error('MongoDB connection error:', error.message);
+        console.error('Full error:', error);
         process.exit(1);
     }
 };

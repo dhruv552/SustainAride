@@ -1,6 +1,6 @@
 const express = require('express');
 const rewardController = require('../controllers/rewardController.cjs');
-const { authenticateUser } = require('../middlewares/auth.cjs');
+const authMiddleware = require('../middlewares/auth.cjs');
 const router = express.Router();
 const Reward = require('../models/Reward.cjs');
 const User = require('../models/User.cjs');
@@ -240,20 +240,20 @@ router.get('/user/:userId/redeemed', async (req, res) => {
  * @desc    Claim eco bonus during pollution alert
  * @access  Private
  */
-router.post('/claim-eco-bonus', authenticateUser, rewardController.claimEcoBonus);
+router.post('/claim-eco-bonus', authMiddleware, rewardController.claimEcoBonus);
 
 /**
  * @route   POST /api/rewards/process-ride-eco-rewards
  * @desc    Process eco rewards for completed rides during pollution alert
  * @access  Private
  */
-router.post('/process-ride-eco-rewards', authenticateUser, rewardController.processRideEcoRewards);
+router.post('/process-ride-eco-rewards', authMiddleware, rewardController.processRideEcoRewards);
 
 /**
  * @route   GET /api/rewards/eco-rewards/:userId
  * @desc    Get pollution alert eco rewards for a user
  * @access  Private
  */
-router.get('/eco-rewards/:userId', authenticateUser, rewardController.getUserEcoRewards);
+router.get('/eco-rewards/:userId', authMiddleware, rewardController.getUserEcoRewards);
 
 module.exports = router;
