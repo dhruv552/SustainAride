@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Calendar, Award, ChevronRight, Home, Info, Repeat } from "lucide-react";
+import { MapPin, Calendar, Award, ChevronRight, Home, Info, Repeat, Wifi, WifiOff } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -18,6 +18,47 @@ const HomePage = () => {
   const [userType, setUserType] = React.useState<"rider" | "driver">("rider");
   const [bookingMode, setBookingMode] = React.useState<"now" | "schedule">("now");
   const [showBookingFlow, setShowBookingFlow] = React.useState(false);
+  const [backendStatus, setBackendStatus] = React.useState<"checking" | "connected" | "disconnected">("checking");
+  const [backendMessage, setBackendMessage] = React.useState<string>("");
+
+  // Test backend connection
+  const testBackendConnection = async () => {
+    setBackendStatus("checking");
+    setBackendMessage("Testing connection...");
+    
+    try {
+      const baseURL = import.meta.env.VITE_API_BASE_URL || 
+                     (window.location.hostname === 'localhost' 
+                       ? 'http://localhost:5000' 
+                       : 'https://sustain-aride-avfp.vercel.app');
+      
+      const response = await fetch(`${baseURL}/api/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBackendStatus("connected");
+        setBackendMessage(`✅ Backend Connected! Database: ${data.database || 'unknown'}`);
+        console.log('Backend health check:', data);
+      } else {
+        setBackendStatus("disconnected");
+        setBackendMessage(`❌ Backend Error: ${response.status} ${response.statusText}`);
+      }
+    } catch (error: any) {
+      setBackendStatus("disconnected");
+      setBackendMessage(`❌ Connection Failed: ${error.message || 'Network error'}`);
+      console.error('Backend connection error:', error);
+    }
+  };
+
+  // Test connection on component mount
+  React.useEffect(() => {
+    testBackendConnection();
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -114,6 +155,31 @@ const HomePage = () => {
               )}
             </div>
             <div className="flex items-center gap-4">
+              {/* Backend Connection Status Button */}
+              <Button
+                variant={backendStatus === "connected" ? "default" : backendStatus === "disconnected" ? "destructive" : "secondary"}
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={testBackendConnection}
+                disabled={backendStatus === "checking"}
+              >
+                {backendStatus === "checking" ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <span className="hidden md:inline">Checking...</span>
+                  </>
+                ) : backendStatus === "connected" ? (
+                  <>
+                    <Wifi className="h-4 w-4" />
+                    <span className="hidden md:inline">Backend OK</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="h-4 w-4" />
+                    <span className="hidden md:inline">Backend Down</span>
+                  </>
+                )}
+              </Button>
               <ThemeToggle />
               <Button
                 variant="outline"
@@ -128,6 +194,21 @@ const HomePage = () => {
               <AuthHeader />
             </div>
           </header>
+
+          {/* Backend Status Message Banner */}
+          {backendMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mb-4 p-4 rounded-lg border ${
+                backendStatus === "connected" 
+                  ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200" 
+                  : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200"
+              }`}
+            >
+              <p className="text-sm font-medium">{backendMessage}</p>
+            </motion.div>
+          )}
 
           {!isAuthenticated && (
             <motion.div
