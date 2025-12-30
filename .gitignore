@@ -32,3 +32,16 @@ core
 
 .github/
 
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.production
+.env.development
+*.env
+server/config.env
+api/server/config.env
+config.env
+
+# Sensitive documentation
+DEPLOYMENT.md
+

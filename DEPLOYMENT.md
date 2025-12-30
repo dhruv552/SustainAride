@@ -38,7 +38,7 @@ git push origin main
 1. **Import your project:**
    - Go to https://vercel.com/new
    - Click "Import Git Repository"
-   - Select: `dhruv552/SustainAride`
+   - Select your repository
 
 2. **Configure the project:**
    - Framework Preset: **Vite**
@@ -52,20 +52,21 @@ git push origin main
 
    | Variable | Value |
    |----------|-------|
-   | `ATLAS_URI` | `mongodb+srv://dhruvagrawal013:Dhruv9425@sustainaride.ycoitdy.mongodb.net/sustainaride?retryWrites=true&w=majority&appName=SustainAride` |
-   | `JWT_SECRET` | `sustainaride_prod_2025_secure_key_XyZ123!@#` (Change this!) |
-   | `FRONTEND_URL` | `https://sustainaride.vercel.app` (Use your actual Vercel URL) |
+   | `ATLAS_URI` | `mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/dbname?retryWrites=true&w=majority` |
+   | `JWT_SECRET` | `your-secret-jwt-key-min-32-characters` (Generate a strong random key!) |
+   | `FRONTEND_URL` | `https://your-app.vercel.app` (Use your actual Vercel URL) |
    | `NODE_ENV` | `production` |
 
    **🔐 Security Note:** 
    - Use a strong, random JWT_SECRET (minimum 32 characters)
    - Generate one here: https://randomkeygen.com/
    - Never share these variables publicly
+   - Replace USERNAME, PASSWORD, cluster, and dbname with your actual MongoDB credentials
 
 4. **Deploy:**
    - Click "Deploy"
    - Wait 2-3 minutes for the build to complete
-   - Your app will be live at: `https://sustainaride-xxx.vercel.app`
+   - Your app will be live at: `https://your-app.vercel.app`
 
 ---
 
