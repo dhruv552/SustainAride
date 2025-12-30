@@ -576,7 +576,10 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
 
   // Add this function to handle coupon application
   const handleApplyCoupon = async (couponCode: string, description: string, discountAmount?: number) => {
-    if (!selectedRide) return;
+    if (!selectedRide || !user) {
+      setCouponError("Please login to apply coupons");
+      return;
+    }
 
     try {
       setCouponError(null);

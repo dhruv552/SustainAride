@@ -84,7 +84,8 @@ const HomePage = () => {
 
   const handleStartBooking = () => {
     if (!isAuthenticated) {
-      // If not logged in, redirect to login instead of starting booking flow
+      // Show alert and redirect to login
+      alert("Please login or create an account to book a ride");
       window.location.href = "/login";
       return;
     }
