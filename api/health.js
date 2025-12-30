@@ -5,26 +5,27 @@ let isConnected = false;
 
 const connectDB = async () => {
   if (isConnected && mongoose.connection.readyState === 1) {
-    return true;
+    return { success: true, error: null };
   }
 
   try {
     const uri = process.env.ATLAS_URI;
     if (!uri) {
-      throw new Error('ATLAS_URI not defined');
+      throw new Error('ATLAS_URI environment variable is not defined');
     }
 
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
     });
 
     isConnected = true;
     console.log('✓ MongoDB connected');
-    return true;
+    return { success: true, error: null };
   } catch (error) {
     console.error('MongoDB connection error:', error.message);
-    return false;
+    isConnected = false;
+    return { success: false, error: error.message };
   }
 };
 
@@ -44,14 +45,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Connect to MongoDB
-    await connectDB();
+    // Try to connect to MongoDB
+    const connectionResult = await connectDB();
     
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     
     return res.status(200).json({ 
       status: 'ok',
       database: dbStatus,
+      connectionAttempt: connectionResult.success ? 'successful' : 'failed',
+      error: connectionResult.error || null,
+      hasAtlasUri: !!process.env.ATLAS_URI,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'production'
     });
@@ -59,7 +63,9 @@ export default async function handler(req, res) {
     console.error('Health check error:', error);
     return res.status(500).json({
       status: 'error',
-      message: error.message
+      message: error.message,
+      database: 'error',
+      hasAtlasUri: !!process.env.ATLAS_URI
     });
   }
 }
