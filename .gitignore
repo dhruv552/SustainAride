@@ -32,13 +32,3 @@ core
 
 .github/
 
-# Environment variables
-.env
-.env.local
-.env.production
-config.env
-
-# Vercel
-.vercel
-
-.env*.local

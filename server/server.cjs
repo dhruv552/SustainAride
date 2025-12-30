@@ -22,8 +22,12 @@ connectDB();
 // Initialize scheduler for cron jobs
 initScheduler();
 
-// Middleware
-app.use(cors());
+// Middleware - CORS configuration for credentials
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
