@@ -71,19 +71,19 @@ const LoginForm: React.FC = () => {
 
     if (serverStatus === 'checking') {
         return (
-            <div className="flex min-h-[70vh] items-center justify-center px-4">
+            <div className="flex min-h-[70vh] items-center justify-center px-2 sm:px-4">
                 <Card className={cardContainerClass}>
-                    <CardHeader className="space-y-1 text-center">
+                    <CardHeader className="space-y-1 text-center p-4 sm:p-6">
                         <div className="flex justify-center mb-2">
-                            <div className="rounded-full bg-primary/10 p-3">
-                                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                            <div className="rounded-full bg-primary/10 p-2 sm:p-3">
+                                <Loader2 className="h-8 w-8 sm:h-10 sm:w-10 animate-spin text-primary" />
                             </div>
                         </div>
-                        <CardTitle className="text-2xl font-bold">SustainAride</CardTitle>
-                        <CardDescription>Checking server connection...</CardDescription>
+                        <CardTitle className="text-xl sm:text-2xl font-bold">SustainAride</CardTitle>
+                        <CardDescription className="text-sm">Checking server connection...</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex flex-col items-center justify-center py-6">
-                        <p className="text-center text-muted-foreground">
+                    <CardContent className="flex flex-col items-center justify-center py-4 sm:py-6 px-4 sm:px-6">
+                        <p className="text-center text-sm text-muted-foreground">
                             Please wait while we connect to the server...
                         </p>
                     </CardContent>
@@ -94,24 +94,24 @@ const LoginForm: React.FC = () => {
 
     if (serverStatus === 'offline') {
         return (
-            <div className="flex min-h-[70vh] items-center justify-center px-4">
+            <div className="flex min-h-[70vh] items-center justify-center px-2 sm:px-4">
                 <Card className={cardContainerClass}>
-                    <CardHeader className="space-y-1 text-center">
+                    <CardHeader className="space-y-1 text-center p-4 sm:p-6">
                         <div className="flex justify-center mb-2">
-                            <div className="rounded-full bg-destructive/10 p-3">
-                                <ServerCrash className="h-10 w-10 text-destructive" />
+                            <div className="rounded-full bg-destructive/10 p-2 sm:p-3">
+                                <ServerCrash className="h-8 w-8 sm:h-10 sm:w-10 text-destructive" />
                             </div>
                         </div>
-                        <CardTitle className="text-2xl font-bold">Server Offline</CardTitle>
-                        <CardDescription>Cannot connect to the SustainAride server</CardDescription>
+                        <CardTitle className="text-xl sm:text-2xl font-bold">Server Offline</CardTitle>
+                        <CardDescription className="text-sm">Cannot connect to the SustainAride server</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex flex-col items-center justify-center py-6">
-                        <h3 className="text-lg font-semibold">Server Connection Error</h3>
-                        <p className="mt-2 text-center text-muted-foreground">
+                    <CardContent className="flex flex-col items-center justify-center py-4 sm:py-6 px-4 sm:px-6">
+                        <h3 className="text-base sm:text-lg font-semibold">Server Connection Error</h3>
+                        <p className="mt-2 text-center text-sm text-muted-foreground">
                             We couldn't connect to the SustainAride server. Please make sure the server is running or contact support.
                         </p>
                         <Button
-                            className="mt-6 w-full"
+                            className="mt-4 sm:mt-6 w-full"
                             onClick={() => window.location.reload()}
                         >
                             Try Again
@@ -123,33 +123,33 @@ const LoginForm: React.FC = () => {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-950 px-4">
+        <div className="flex min-h-screen items-center justify-center bg-gray-950 px-2 sm:px-4 py-4">
             <Card className="w-full max-w-sm mx-auto bg-gray-950 border border-gray-800 rounded-lg shadow-xl">
-                <CardHeader className="space-y-1 text-center">
-                    <div className="flex justify-center mb-4">
-                        <div className="rounded-full bg-gray-800 p-3">
-                            <LogIn className="h-8 w-8 text-primary" />
+                <CardHeader className="space-y-1 text-center p-4 sm:p-6">
+                    <div className="flex justify-center mb-3 sm:mb-4">
+                        <div className="rounded-full bg-gray-800 p-2 sm:p-3">
+                            <LogIn className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                         </div>
                     </div>
-                    <CardTitle className="text-2xl font-bold text-white">Welcome Back</CardTitle>
-                    <CardDescription className="text-gray-400">Enter your credentials to access your account</CardDescription>
+                    <CardTitle className="text-xl sm:text-2xl font-bold text-white">Welcome Back</CardTitle>
+                    <CardDescription className="text-sm text-gray-400">Enter your credentials to access your account</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                <CardContent className="p-4 sm:p-6">
+                    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                         {error && (
-                            <Alert variant="destructive" className="mb-4">
-                                <AlertDescription>{error}</AlertDescription>
+                            <Alert variant="destructive" className="mb-3 sm:mb-4">
+                                <AlertDescription className="text-sm">{error}</AlertDescription>
                             </Alert>
                         )}
                         {networkError && (
-                            <Alert variant="destructive" className="mb-4">
-                                <AlertDescription>{networkError}</AlertDescription>
+                            <Alert variant="destructive" className="mb-3 sm:mb-4">
+                                <AlertDescription className="text-sm">{networkError}</AlertDescription>
                             </Alert>
                         )}
                         <div className="space-y-2">
                             <Label htmlFor="email" className="text-sm font-medium text-gray-300">Email</Label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
+                                <Mail className="absolute left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
                                 <Input
                                     id="email"
                                     type="email"
@@ -162,7 +162,7 @@ const LoginForm: React.FC = () => {
                                     }}
                                     required
                                     autoComplete="email"
-                                    className="pl-10 bg-gray-900 border-gray-700 text-white placeholder:text-gray-500"
+                                    className="pl-9 sm:pl-10 bg-gray-900 border-gray-700 text-white placeholder:text-gray-500 text-sm sm:text-base h-10 sm:h-11"
                                 />
                             </div>
                         </div>
@@ -174,7 +174,7 @@ const LoginForm: React.FC = () => {
                                 </a>
                             </div>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
+                                <Lock className="absolute left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
                                 <Input
                                     id="password"
                                     type="password"
@@ -187,13 +187,13 @@ const LoginForm: React.FC = () => {
                                     }}
                                     required
                                     autoComplete="current-password"
-                                    className="pl-10 bg-gray-900 border-gray-700 text-white placeholder:text-gray-500"
+                                    className="pl-9 sm:pl-10 bg-gray-900 border-gray-700 text-white placeholder:text-gray-500 text-sm sm:text-base h-10 sm:h-11"
                                 />
                             </div>
                         </div>
                         <Button
                             type="submit"
-                            className="w-full bg-white hover:bg-gray-100 text-black font-medium"
+                            className="w-full bg-white hover:bg-gray-100 text-black font-medium text-sm sm:text-base h-10 sm:h-11"
                             disabled={loading}
                         >
                             {loading ? (
@@ -207,8 +207,8 @@ const LoginForm: React.FC = () => {
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="flex justify-center py-4 border-t border-gray-800">
-                    <p className="text-sm text-center text-gray-400">
+                <CardFooter className="flex justify-center py-3 sm:py-4 border-t border-gray-800 px-4 sm:px-6">
+                    <p className="text-xs sm:text-sm text-center text-gray-400">
                         Don't have an account?{' '}
                         <Link to="/signup" className="text-primary font-medium hover:underline">
                             Sign up
