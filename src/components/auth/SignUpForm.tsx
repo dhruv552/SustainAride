@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '../ui/label';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, ServerCrash, UserPlus, Mail, Phone, Lock, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const SignUpForm: React.FC = () => {
     const [name, setName] = useState('');
@@ -304,9 +304,9 @@ const SignUpForm: React.FC = () => {
                 <CardFooter className="flex justify-center py-4 border-t border-gray-800">
                     <p className="text-sm text-center text-gray-400">
                         Already have an account?{' '}
-                        <a href="/login" className="text-primary font-medium hover:underline">
+                        <Link to="/login" className="text-primary font-medium hover:underline">
                             Login
-                        </a>
+                        </Link>
                     </p>
                 </CardFooter>
             </Card>

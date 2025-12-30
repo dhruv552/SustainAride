@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '../ui/label';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, ServerCrash, LogIn, Mail, Lock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -210,9 +210,9 @@ const LoginForm: React.FC = () => {
                 <CardFooter className="flex justify-center py-4 border-t border-gray-800">
                     <p className="text-sm text-center text-gray-400">
                         Don't have an account?{' '}
-                        <a href="/signup" className="text-primary font-medium hover:underline">
+                        <Link to="/signup" className="text-primary font-medium hover:underline">
                             Sign up
-                        </a>
+                        </Link>
                     </p>
                 </CardFooter>
             </Card>
