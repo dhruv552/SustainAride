@@ -661,3 +661,17 @@ If you have any questions or need help:
 [Back to Top](#-sustainaride)
 
 </div>
+
+
+---
+
+## 📜 Copyright & License
+
+**Copyright © 2025 Dhruv. All Rights Reserved.**
+
+This project is protected by copyright law. Unauthorized reproduction, 
+distribution, or commercial use is strictly prohibited.
+
+For licensing or collaboration inquiries: dhruvagrawal552@gmail.com
+
+---
