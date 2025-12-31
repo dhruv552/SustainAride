@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import authService from '../api/authService';
 import { User } from '../types/api';
 
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Load user data from localStorage if available
@@ -50,7 +52,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         };
 
         checkAuthentication();
-    }, []);
+
+        // Listen for auth events
+        const handleLogout = () => {
+            setUser(null);
+            navigate('/');
+        };
+
+        const handleUnauthorized = () => {
+            setUser(null);
+            navigate('/login');
+        };
+
+        window.addEventListener('auth:logout', handleLogout);
+        window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+        return () => {
+            window.removeEventListener('auth:logout', handleLogout);
+            window.removeEventListener('auth:unauthorized', handleUnauthorized);
+        };
+    }, [navigate]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);

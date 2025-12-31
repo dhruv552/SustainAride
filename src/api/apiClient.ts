@@ -60,10 +60,8 @@ class ApiClient {
                     localStorage.removeItem('auth_token');
                     localStorage.removeItem('user');
 
-                    // Redirect to login page if not already there
-                    if (!window.location.pathname.includes('/login')) {
-                        window.location.href = '/login';
-                    }
+                    // Trigger logout event (will be handled by React Router)
+                    window.dispatchEvent(new CustomEvent('auth:unauthorized'));
                 }
 
                 // Handle rate limiting (429)

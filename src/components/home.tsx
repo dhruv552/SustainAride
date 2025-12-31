@@ -11,10 +11,11 @@ import ActiveCoupons from "./ActiveCoupons";
 import { ThemeToggle } from "./ui/theme-toggle";
 import AuthHeader from "./AuthHeader";
 import { useAuth } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const { user, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
   const [userType, setUserType] = React.useState<"rider" | "driver">("rider");
   const [bookingMode, setBookingMode] = React.useState<"now" | "schedule">("now");
   const [showBookingFlow, setShowBookingFlow] = React.useState(false);
@@ -84,9 +85,11 @@ const HomePage = () => {
 
   const handleStartBooking = () => {
     if (!isAuthenticated) {
-      // Show alert and redirect to login
-      alert("Please login or create an account to book a ride");
-      window.location.href = "/login";
+      // Show alert and redirect to login using React Router
+      const proceed = window.confirm("Please login or create an account to book a ride. Click OK to go to login page.");
+      if (proceed) {
+        navigate("/login");
+      }
       return;
     }
     setShowBookingFlow(true);

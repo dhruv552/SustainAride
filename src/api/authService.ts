@@ -79,8 +79,8 @@ class AuthService {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user');
 
-        // Redirect to home page
-        window.location.href = '/';
+        // Redirect to home page using event (will be handled by React Router)
+        window.dispatchEvent(new CustomEvent('auth:logout'));
     }
 
     /**
