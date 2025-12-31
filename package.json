@@ -1,10 +1,10 @@
 {
   "name": "starter",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": "24.x"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "dev": "vite",
@@ -12,10 +12,14 @@
     "build-no-errors": "tsc && vite build",
     "vercel-build": "npm run build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
     "preview": "vite preview",
     "server": "node start-server.cjs",
     "server:debug": "node --inspect server/server.cjs",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "test": "echo \"Error: no test runner configured\" && exit 0",
+    "test:api": "node server/test-api.cjs",
+    "audit:fix": "npm audit fix",
     "types:supabase": "npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/supabase.ts"
   },
   "dependencies": {
@@ -48,6 +52,8 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@sentry/node": "^10.32.1",
+    "@sentry/tracing": "^7.120.4",
     "@supabase/supabase-js": "^2.45.6",
     "@types/leaflet": "^1.9.17",
     "axios": "^1.9.0",
@@ -55,6 +61,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "dotenv": "^16.5.0",
@@ -62,14 +69,17 @@
     "express": "^5.1.0",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.2.1",
+    "express-validator": "^7.3.1",
     "framer-motion": "^11.18.2",
     "helmet": "^8.1.0",
+    "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "lucide-react": "^0.394.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
+    "morgan": "^1.10.1",
     "node-cache": "^5.1.2",
     "node-cron": "^4.0.5",
     "react": "^18.2.0",
@@ -84,6 +94,8 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

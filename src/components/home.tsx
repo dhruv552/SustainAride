@@ -25,13 +25,13 @@ const HomePage = () => {
   const testBackendConnection = async () => {
     setBackendStatus("checking");
     setBackendMessage("Testing connection...");
-    
+
     try {
-      const baseURL = import.meta.env.VITE_API_BASE_URL || 
-                     (window.location.hostname === 'localhost' 
-                       ? 'http://localhost:5000' 
-                       : 'https://sustain-aride-avfp.vercel.app');
-      
+      const baseURL = import.meta.env.VITE_API_BASE_URL ||
+        (window.location.hostname === 'localhost'
+          ? 'http://localhost:5000'
+          : 'https://sustain-aride-avfp.vercel.app');
+
       const response = await fetch(`${baseURL}/api/health`, {
         method: 'GET',
         headers: {
@@ -202,11 +202,10 @@ const HomePage = () => {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`mb-3 sm:mb-4 p-3 sm:p-4 rounded-lg border ${
-                backendStatus === "connected" 
-                  ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200" 
+              className={`mb-3 sm:mb-4 p-3 sm:p-4 rounded-lg border ${backendStatus === "connected"
+                  ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200"
                   : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200"
-              }`}
+                }`}
             >
               <p className="text-xs sm:text-sm font-medium">{backendMessage}</p>
             </motion.div>
@@ -353,7 +352,7 @@ const HomePage = () => {
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   {/* Rest of driver content with responsive improvements */}
                   <Card className="bg-card shadow-md rounded-xl overflow-hidden">
                     <CardContent className="p-4 sm:p-6">
@@ -403,7 +402,7 @@ const HomePage = () => {
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   {/* Top Green Drivers - responsive */}
                   <Card className="bg-card shadow-md rounded-xl overflow-hidden">
                     <CardContent className="p-4 sm:p-6">

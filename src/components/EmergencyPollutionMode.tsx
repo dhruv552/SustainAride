@@ -28,7 +28,7 @@ const EmergencyPollutionMode: React.FC = () => {
   useEffect(() => {
     console.log('EmergencyPollutionMode component mounted');
     setLoading(true);
-    
+
     // Subscribe to AQI updates
     const unsubscribe = aqiService.subscribeToUpdates(data => {
       console.log('AQI update received in EmergencyPollutionMode:', data);
@@ -38,7 +38,7 @@ const EmergencyPollutionMode: React.FC = () => {
       setIsVisible(shouldShow);
       setLoading(false);
     });
-    
+
     // Also listen for the custom force-pollution-alert event
     const handleForceAlert = (event: CustomEvent<AQIData>) => {
       console.log('Force pollution alert event received:', event.detail);
@@ -46,9 +46,9 @@ const EmergencyPollutionMode: React.FC = () => {
       setIsVisible(true);
       setLoading(false);
     };
-    
+
     window.addEventListener('force-pollution-alert', handleForceAlert as EventListener);
-    
+
     // Clean up subscription when component unmounts
     return () => {
       console.log('EmergencyPollutionMode component unmounting');
@@ -67,7 +67,7 @@ const EmergencyPollutionMode: React.FC = () => {
       alert('You must be logged in to claim bonus points.');
       return;
     }
-    
+
     try {
       setClaimingBonus(true);
       await apiClient.post('/api/rewards/claim-eco-bonus', {
@@ -75,7 +75,7 @@ const EmergencyPollutionMode: React.FC = () => {
         timestamp: new Date().toISOString(),
         actionType: 'pollution_alert_opt_in'
       });
-      
+
       alert('Thank you for committing to eco-friendly rides! Extra points will be added to your next green ride.');
     } catch (err) {
       console.error('Error claiming bonus:', err);
@@ -100,13 +100,13 @@ const EmergencyPollutionMode: React.FC = () => {
       <Card className="overflow-hidden border-l-4" style={{ borderLeftColor: aqiData?.color }}>
         <div className="relative overflow-hidden">
           {/* Background gradient based on AQI color */}
-          <div 
-            className="absolute inset-0 opacity-10" 
-            style={{ 
-              background: `linear-gradient(90deg, ${aqiData?.color} 0%, transparent 100%)` 
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              background: `linear-gradient(90deg, ${aqiData?.color} 0%, transparent 100%)`
             }}
           />
-          
+
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               {/* Alert Info */}
@@ -117,13 +117,13 @@ const EmergencyPollutionMode: React.FC = () => {
                   <p className="text-sm md:text-base">Help Delhi breathe. Take a CNG, EV, or shared ride today.</p>
                 </div>
               </div>
-              
+
               {/* AQI Info */}
               <div className="flex items-center bg-black/5 rounded-lg p-2">
                 <div className="flex flex-col items-center mr-3">
                   <span className="text-xs uppercase font-semibold text-muted-foreground">Current AQI</span>
-                  <span 
-                    className="text-2xl font-bold" 
+                  <span
+                    className="text-2xl font-bold"
                     style={{ color: aqiData?.color }}
                   >
                     {aqiData?.aqi}
@@ -136,7 +136,7 @@ const EmergencyPollutionMode: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Extra Rewards Section */}
             <div className="mt-4">
               <h4 className="font-medium mb-2">Extra rewards during high pollution:</h4>
@@ -155,12 +155,12 @@ const EmergencyPollutionMode: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* CTA Button */}
             <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={handleClaimBonus} 
-                disabled={claimingBonus} 
+              <Button
+                onClick={handleClaimBonus}
+                disabled={claimingBonus}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 {claimingBonus ? 'Claiming...' : 'Claim Eco Bonus'}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  MapContainer, 
-  TileLayer, 
-  Marker, 
-  Popup, 
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
   useMap
 } from 'react-leaflet';
 import L from 'leaflet';
@@ -40,12 +40,12 @@ const destinationIcon = new L.Icon({
 });
 
 // Component to handle the routing between two points
-const RoutingMachine = ({ 
-  sourceLocation, 
+const RoutingMachine = ({
+  sourceLocation,
   destinationLocation,
-  onRouteFound 
-}: { 
-  sourceLocation: Location | null, 
+  onRouteFound
+}: {
+  sourceLocation: Location | null,
   destinationLocation: Location | null,
   onRouteFound?: (distance: number, duration: number) => void
 }) => {
@@ -81,7 +81,7 @@ const RoutingMachine = ({
       addWaypoints: false, // Don't allow adding or removing waypoints
       draggableWaypoints: false, // Don't allow dragging waypoints
       fitSelectedRoutes: true,
-      createMarker: function() { return null; } // We'll create our own markers
+      createMarker: function () { return null; } // We'll create our own markers
     }).addTo(map);
 
     // Add route calculation event handler
@@ -89,13 +89,13 @@ const RoutingMachine = ({
       const routes = e.routes;
       if (routes && routes.length > 0) {
         const route = routes[0]; // Get the first (best) route
-        
+
         // Distance in meters, convert to kilometers
         const distanceInKm = (route.summary.totalDistance / 1000).toFixed(1);
-        
+
         // Duration in seconds, convert to minutes
         const durationInMinutes = Math.round(route.summary.totalTime / 60);
-        
+
         // Call the callback with the calculated values
         if (onRouteFound) {
           onRouteFound(parseFloat(distanceInKm), durationInMinutes);
@@ -160,20 +160,20 @@ const MapView: React.FC<MapViewProps> = ({
 
   return (
     <div className={`map-container ${className}`} style={{ height }}>
-      <MapContainer 
-        center={center} 
-        zoom={13} 
-        scrollWheelZoom={true} 
+      <MapContainer
+        center={center}
+        zoom={13}
+        scrollWheelZoom={true}
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         {/* Source marker */}
         {sourceLocation && (
-          <Marker 
+          <Marker
             position={[sourceLocation.lat, sourceLocation.lng]}
             icon={sourceIcon}
           >
@@ -185,10 +185,10 @@ const MapView: React.FC<MapViewProps> = ({
             </Popup>
           </Marker>
         )}
-        
+
         {/* Destination marker */}
         {destinationLocation && (
-          <Marker 
+          <Marker
             position={[destinationLocation.lat, destinationLocation.lng]}
             icon={destinationIcon}
           >
@@ -200,7 +200,7 @@ const MapView: React.FC<MapViewProps> = ({
             </Popup>
           </Marker>
         )}
-        
+
         {/* Vehicle marker */}
         {vehicleLocation && (
           <Marker position={[vehicleLocation.lat, vehicleLocation.lng]}>
@@ -211,7 +211,7 @@ const MapView: React.FC<MapViewProps> = ({
             </Popup>
           </Marker>
         )}
-        
+
         {/* Add routing between source and destination */}
         {sourceLocation && destinationLocation && (
           <RoutingMachine
@@ -220,7 +220,7 @@ const MapView: React.FC<MapViewProps> = ({
             onRouteFound={onRouteCalculated}
           />
         )}
-        
+
         {/* Update map center when locations change */}
         <ChangeMapView center={center} />
       </MapContainer>

@@ -1,21 +1,21 @@
 {
-  "name": "sustainaride-api",
-  "version": "1.0.0",
-  "type": "module",
-  "engines": {
-    "node": "24.x"
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "cors": "^2.8.5",
-    "mongoose": "^8.15.0",
-    "express-rate-limit": "^7.1.5",
-    "express-mongo-sanitize": "^2.2.0",
-    "helmet": "^7.1.0",
-    "bcryptjs": "^3.0.2",
-    "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.5.0",
-    "node-cache": "^5.1.2",
-    "node-cron": "^4.0.5"
-  }
+    "name": "sustainaride-api",
+    "version": "1.0.0",
+    "type": "module",
+    "engines": {
+        "node": "24.x"
+    },
+    "dependencies": {
+        "express": "^5.1.0",
+        "cors": "^2.8.5",
+        "mongoose": "^8.15.0",
+        "express-rate-limit": "^7.1.5",
+        "express-mongo-sanitize": "^2.2.0",
+        "helmet": "^7.1.0",
+        "bcryptjs": "^3.0.2",
+        "jsonwebtoken": "^9.0.2",
+        "dotenv": "^16.5.0",
+        "node-cache": "^5.1.2",
+        "node-cron": "^4.0.5"
+    }
 }

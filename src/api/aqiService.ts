@@ -62,24 +62,24 @@ class AQIService {
     if (this.currentData) {
       return this.currentData;
     }
-    
+
     // Otherwise fetch fresh data
     try {
       const response = await apiClient.get<AQIResponse>('/api/aqi/delhi');
-      
+
       const { aqi, location } = response;
       const { level, color } = this.getAQILevel(aqi);
-      
+
       this.currentData = {
         ...response,
         level,
         color
       };
-      
+
       return this.currentData;
     } catch (error) {
       console.error('Failed to fetch AQI data:', error);
-      
+
       // Return fallback data when API fails
       const fallbackData: AQIDataWithLevel = {
         aqi: 80,
@@ -89,19 +89,19 @@ class AQIService {
         timestamp: new Date().toISOString(),
         status: 'normal'
       };
-      
+
       this.currentData = fallbackData;
       return fallbackData;
     }
   }
-  
+
   /**
    * Check if there's a current pollution alert
    */
-  async checkPollutionAlert(): Promise<{isAlert: boolean; aqi: number}> {
-    return apiClient.get<{isAlert: boolean; aqi: number}>('/api/aqi/alert-status');
+  async checkPollutionAlert(): Promise<{ isAlert: boolean; aqi: number }> {
+    return apiClient.get<{ isAlert: boolean; aqi: number }>('/api/aqi/alert-status');
   }
-  
+
   /**
    * Subscribe to AQI updates
    * @param callback Function to call when AQI data is updated
@@ -109,7 +109,7 @@ class AQIService {
    */
   subscribeToUpdates(callback: (data: AQIDataWithLevel) => void): () => void {
     this.emitter.on('aqi-update', callback);
-    
+
     // If we have current data, emit it immediately
     if (this.currentData) {
       setTimeout(() => callback(this.currentData!), 0);
@@ -119,13 +119,13 @@ class AQIService {
         .then(data => callback(data))
         .catch(err => console.error('Error fetching initial AQI data:', err));
     }
-    
+
     // Return unsubscribe function
     return () => {
       this.emitter.off('aqi-update', callback);
     };
   }
-  
+
   /**
    * Start polling for AQI updates
    */
@@ -134,16 +134,16 @@ class AQIService {
     if (this.intervalId !== null) {
       window.clearInterval(this.intervalId);
     }
-    
+
     // Do an initial fetch
     this.updateAQIData();
-    
+
     // Set up interval for regular updates
     this.intervalId = window.setInterval(() => {
       this.updateAQIData();
     }, this.pollInterval);
   }
-  
+
   /**
    * Stop polling for AQI updates
    */
@@ -153,7 +153,7 @@ class AQIService {
       this.intervalId = null;
     }
   }
-  
+
   /**
    * Fetch and update AQI data
    */
@@ -163,27 +163,27 @@ class AQIService {
       console.log('In test mode, skipping API call');
       return;
     }
-    
+
     try {
       const response = await apiClient.get<AQIResponse>('/api/aqi/delhi');
-      
+
       const { aqi, location } = response;
       const { level, color } = this.getAQILevel(aqi);
-      
+
       const newData: AQIDataWithLevel = {
         ...response,
         level,
         color
       };
-      
+
       // Update cached data
       this.currentData = newData;
-      
+
       // Notify subscribers
       this.emitter.emit('aqi-update', newData);
     } catch (error) {
       console.error('Failed to update AQI data:', error);
-      
+
       // Use fallback data if API fails
       if (!this.currentData) {
         const fallbackData: AQIDataWithLevel = {
@@ -194,13 +194,13 @@ class AQIService {
           timestamp: new Date().toISOString(),
           status: 'normal'
         };
-        
+
         this.currentData = fallbackData;
         this.emitter.emit('aqi-update', fallbackData);
       }
     }
   }
-  
+
   /**
    * Get AQI level description and color based on value
    */
@@ -218,24 +218,24 @@ class AQIService {
    */
   simulateHighAQI(): void {
     console.log('Simulating high AQI levels for testing');
-    
+
     // Create mock data with very high AQI
     const testData: AQIDataWithLevel = {
       aqi: 350, // Very high AQI value to ensure it triggers the alert
       location: 'Delhi, India (Test Mode)',
-      level: 'Hazardous', 
+      level: 'Hazardous',
       color: '#7E0023',
       timestamp: new Date().toISOString(),
       status: 'alert'
     };
-    
+
     // Update cached data
     this.currentData = testData;
     this.testMode = true;
-    
+
     // Force EmergencyPollutionMode to appear by directly broadcasting the high AQI data
     window.dispatchEvent(new CustomEvent('force-pollution-alert', { detail: testData }));
-    
+
     // Make sure all subscribers get this update immediately
     try {
       const events = this.emitter.getEvents();

@@ -66,21 +66,21 @@ interface RideBookingFlowProps {
 const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps) => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<number>(0);
-  
+
   // Updated to store full location objects instead of just strings
   const [pickupLocation, setPickupLocation] = useState<Location | null>(null);
   const [destination, setDestination] = useState<Location | null>(null);
-  
+
   // Add state for route distance and duration
   const [routeDistance, setRouteDistance] = useState<number>(0);
   const [routeDuration, setRouteDuration] = useState<number>(0);
-  
+
   const [selectedRideType, setSelectedRideType] = useState<
     "CNG" | "Electric" | "Shared"
   >("Electric");
   const [selectedRide, setSelectedRide] = useState<RideOption | null>(null);
   const [isBookingConfirmed, setIsBookingConfirmed] = useState<boolean>(false);
-  
+
   // Add state for vehicle location (for simulating driver movement)
   const [vehicleLocation, setVehicleLocation] = useState<Location | null>(null);
 
@@ -94,7 +94,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
   const handleRouteCalculated = (distance: number, duration: number) => {
     setRouteDistance(distance);
     setRouteDuration(duration);
-    
+
     // Update the available rides with the actual distance
     const updatedRides = availableRides.map(ride => ({
       ...ride,
@@ -102,16 +102,16 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
       price: calculateFare(ride.type, distance),
       eta: ride.type === "Shared" ? duration + 5 : duration
     }));
-    
+
     setAvailableRides(updatedRides);
   };
-  
+
   // Calculate fare based on distance and ride type
   const calculateFare = (rideType: "CNG" | "Electric" | "Shared", distance: number): number => {
     const baseFare = 50;
     let perKmRate = 0;
-    
-    switch(rideType) {
+
+    switch (rideType) {
       case "CNG":
         perKmRate = 12;
         break;
@@ -124,7 +124,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
       default:
         perKmRate = 10;
     }
-    
+
     return Math.round(baseFare + (perKmRate * distance));
   };
 
@@ -205,7 +205,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
   // Simulate vehicle movement when ride is confirmed
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    
+
     if (isBookingConfirmed && pickupLocation) {
       // Set initial vehicle position (for demo purposes)
       const initialVehiclePos: Location = {
@@ -214,16 +214,16 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
         address: "Driver's current location"
       };
       setVehicleLocation(initialVehiclePos);
-      
+
       // Simulate vehicle movement
       interval = setInterval(() => {
         setVehicleLocation(prevLocation => {
           if (!prevLocation || !pickupLocation) return prevLocation;
-          
+
           // Move vehicle closer to pickup point
           const newLat = prevLocation.lat + (pickupLocation.lat - prevLocation.lat) * 0.1;
           const newLng = prevLocation.lng + (pickupLocation.lng - prevLocation.lng) * 0.1;
-          
+
           return {
             lat: newLat,
             lng: newLng,
@@ -232,7 +232,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
         });
       }, 2000); // Update every 2 seconds
     }
-    
+
     return () => {
       if (interval) clearInterval(interval);
     };
@@ -333,7 +333,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
             icon={<MapPin />}
             onLocationSelect={(location) => setPickupLocation(location)}
           />
-          
+
           {/* LocationSearch component for destination */}
           <LocationSearch
             placeholder="Enter destination"
@@ -341,7 +341,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
             onLocationSelect={(location) => setDestination(location)}
           />
         </div>
-        
+
         {/* Display map with selected locations */}
         {(pickupLocation || destination) && (
           <div className="mt-4 rounded-md overflow-hidden border">
@@ -353,7 +353,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
             />
           </div>
         )}
-        
+
         {/* Display route information when both locations are selected */}
         {pickupLocation && destination && routeDistance > 0 && (
           <div className="flex items-center justify-between bg-primary/10 p-3 rounded-md">
@@ -422,7 +422,7 @@ const RideBookingFlow = ({ onClose, bookingMode = "now" }: RideBookingFlowProps)
             Change Location
           </Button>
         </div>
-        
+
         {/* Route distance info */}
         <div className="flex items-center justify-between bg-primary/10 p-3 rounded-md">
           <div className="flex items-center">

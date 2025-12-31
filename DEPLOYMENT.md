@@ -1,300 +1,289 @@
-# SustainAride Deployment Guide
+# 🚀 Production Deployment Guide
 
-## 🚀 Deploying to Vercel with Automatic Backend Connection
+## Prerequisites
+- Node.js 18+ installed
+- MongoDB Atlas account
+- Vercel account
+- Git repository
 
-### Prerequisites
-- GitHub account
-- Vercel account (sign up at https://vercel.com)
-- MongoDB Atlas cluster (already set up)
+## Step 1: Environment Setup
 
-### 🔒 Security Features Included
-Your backend is now secured with:
-- **SSL/TLS Encryption** for MongoDB connections
-- **Rate Limiting** to prevent DDoS attacks
-- **CORS Protection** with whitelist validation
-- **NoSQL Injection Prevention**
-- **Helmet.js** for HTTP header security
-- **Automatic Health Checks** to keep serverless functions warm
+### Local Development
+1. Copy `.env.example` to `server/config.env`
+2. Fill in all required values:
+   - `ATLAS_URI`: Your MongoDB connection string
+   - `JWT_SECRET`: Strong random string (32+ characters)
+   - `FRONTEND_URL`: Your frontend URL
 
----
-
-## Step 1: Push to GitHub
-
-1. **Stage and commit your code:**
-```bash
-git add .
-git commit -m "Add secure backend with automatic MongoDB connection"
+### Production (Vercel)
+Add these environment variables in Vercel Dashboard:
+```
+ATLAS_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+NODE_ENV=production
+FRONTEND_URL=https://your-app.vercel.app
 ```
 
-2. **Push to GitHub:**
+## Step 2: MongoDB Atlas Configuration
+
+1. **Create a Cluster**
+   - Go to MongoDB Atlas
+   - Create a free M0 cluster
+   - Choose a region close to your users
+
+2. **Network Access**
+   - Click "Network Access"
+   - Add IP: `0.0.0.0/0` (allows all IPs - Vercel uses dynamic IPs)
+   - ⚠️ Use database user authentication for security
+
+3. **Database User**
+   - Click "Database Access"
+   - Create a new user with strong password
+   - Grant "Read and write to any database" role
+
+4. **Get Connection String**
+   - Click "Connect" → "Connect your application"
+   - Copy the connection string
+   - Replace `<password>` with your actual password
+
+## Step 3: Vercel Deployment
+
+### Via Vercel CLI
 ```bash
-git push origin main
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy
+vercel --prod
 ```
 
----
-
-## Step 2: Deploy on Vercel
-
-1. **Import your project:**
-   - Go to https://vercel.com/new
-   - Click "Import Git Repository"
-   - Select your repository
-
-2. **Configure the project:**
-   - Framework Preset: **Vite**
-   - Root Directory: `./`
+### Via GitHub Integration
+1. Push code to GitHub
+2. Import project in Vercel
+3. Configure build settings:
    - Build Command: `npm run build`
    - Output Directory: `dist`
+4. Add environment variables
+5. Deploy
 
-3. **⚠️ IMPORTANT: Add Environment Variables**
-   
-   Go to Project Settings → Environment Variables and add these **4 variables**:
+## Step 4: Post-Deployment Checks
 
-   | Variable | Value |
-   |----------|-------|
-   | `ATLAS_URI` | `mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/dbname?retryWrites=true&w=majority` |
-   | `JWT_SECRET` | `your-secret-jwt-key-min-32-characters` (Generate a strong random key!) |
-   | `FRONTEND_URL` | `https://your-app.vercel.app` (Use your actual Vercel URL) |
-   | `NODE_ENV` | `production` |
+### Health Check
+Visit: `https://your-app.vercel.app/health`
 
-   **🔐 Security Note:** 
-   - Use a strong, random JWT_SECRET (minimum 32 characters)
-   - Generate one here: https://randomkeygen.com/
-   - Never share these variables publicly
-   - Replace USERNAME, PASSWORD, cluster, and dbname with your actual MongoDB credentials
-
-4. **Deploy:**
-   - Click "Deploy"
-   - Wait 2-3 minutes for the build to complete
-   - Your app will be live at: `https://your-app.vercel.app`
-
----
-
-## Step 3: Configure MongoDB Atlas Security
-
-### A. Network Access Configuration
-1. Go to MongoDB Atlas → Network Access
-2. Click "Add IP Address"
-3. **Option 1 (Recommended for Testing):**
-   - Select "Allow Access from Anywhere" (0.0.0.0/0)
-   
-4. **Option 2 (Production - More Secure):**
-   - Add Vercel's IP ranges (contact Vercel support for current IPs)
-
-### B. Database User Permissions
-1. Go to Database Access
-2. Ensure your user has **Read and Write** permissions
-3. Consider creating a separate user for production
-
-### C. Enable Monitoring
-1. Go to Metrics → Enable Real-time Performance Panel
-2. Set up alerts for unusual activity
-3. Monitor connection patterns
-
----
-
-## Step 4: Test Your Deployment
-
-### Frontend Test:
-Visit your Vercel URL: `https://your-app.vercel.app`
-
-### Backend Health Check:
-```bash
-curl https://your-app.vercel.app/api/health
-```
-
-Expected response:
+Should return:
 ```json
 {
   "status": "ok",
   "database": "connected",
-  "timestamp": "2025-12-29T...",
+  "timestamp": "2025-12-31T...",
   "environment": "production"
 }
 ```
 
-### API Test:
+### Test API Endpoints
 ```bash
-curl https://your-app.vercel.app/api
+# Test registration
+curl -X POST https://your-api.vercel.app/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"test@example.com","password":"Test1234"}'
+
+# Test login
+curl -X POST https://your-api.vercel.app/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Test1234"}'
 ```
 
-Expected response:
+## Step 5: Security Hardening
+
+### Enable HTTPS (Automatic on Vercel)
+Vercel automatically provisions SSL certificates
+
+### Configure CORS
+Update `server/server.cjs`:
+```javascript
+app.use(cors({
+  origin: [
+    'https://your-app.vercel.app',
+    'https://www.your-domain.com'
+  ],
+  credentials: true
+}));
+```
+
+### Set Security Headers
+Already configured via Helmet.js
+
+### Enable Rate Limiting
+Already configured in `server/server.cjs`
+
+## Step 6: Monitoring Setup
+
+### Vercel Analytics
+1. Go to Vercel Dashboard
+2. Enable Analytics for your project
+3. Monitor performance and usage
+
+### MongoDB Monitoring
+1. Open MongoDB Atlas
+2. Navigate to "Metrics"
+3. Set up alerts for:
+   - High connection count
+   - Slow queries
+   - Storage usage
+
+### Error Tracking (Optional)
+Install Sentry:
+```bash
+npm install @sentry/node @sentry/tracing
+```
+
+Add to `server/server.cjs`:
+```javascript
+const Sentry = require("@sentry/node");
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV
+});
+```
+
+## Step 7: Performance Optimization
+
+### Enable Compression
+Already configured in server
+
+### Configure Caching
+Add to `vercel.json`:
 ```json
 {
-  "message": "Welcome to SustainAride API",
-  "version": "1.0.0",
-  "status": "operational"
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=60, stale-while-revalidate"
+        }
+      ]
+    }
+  ]
 }
 ```
 
----
+### Database Indexing
+Run these commands in MongoDB Atlas:
+```javascript
+// User indexes
+db.users.createIndex({ email: 1 }, { unique: true })
+db.users.createIndex({ sustainPoints: -1 })
 
-## 🔄 Automatic Features
+// Ride indexes
+db.rides.createIndex({ user: 1, createdAt: -1 })
+db.rides.createIndex({ status: 1 })
 
-### 1. **Auto-Connect to MongoDB**
-   - Backend automatically connects to MongoDB on every request
-   - Uses connection pooling for optimal performance
-   - Retries up to 3 times on connection failure
-
-### 2. **Auto-Reconnect**
-   - If MongoDB disconnects, automatic reconnection with exponential backoff
-   - Maintains connection health with monitoring
-
-### 3. **Cold Start Prevention**
-   - Frontend pings backend every 5 minutes (production only)
-   - Keeps serverless functions warm
-   - Reduces response time for users
-
-### 4. **Environment Detection**
-   - Frontend automatically uses correct API URL:
-     - **Development**: `http://localhost:5000`
-     - **Production**: Same domain as frontend (Vercel URL)
-
----
-
-## 📊 Monitoring & Maintenance
-
-### Check Deployment Logs:
-1. Go to Vercel Dashboard → Your Project
-2. Click "Functions" tab
-3. View real-time logs for API requests
-
-### Monitor MongoDB:
-1. MongoDB Atlas Dashboard → Metrics
-2. Check:
-   - Connection count
-   - Operation execution time
-   - Network traffic
-
-### Check Security:
-1. Review rate limit violations in Vercel logs
-2. Monitor failed authentication attempts
-3. Check for unusual traffic patterns
-
----
-
-## 🔒 Security Best Practices
-
-### Before Going Live:
-- [ ] Changed JWT_SECRET from default value
-- [ ] Updated FRONTEND_URL to actual Vercel URL
-- [ ] Enabled MongoDB Atlas IP whitelist
-- [ ] Verified all environment variables are set
-- [ ] Reviewed SECURITY.md file
-- [ ] Tested all API endpoints
-- [ ] Enabled 2FA on GitHub, Vercel, and MongoDB Atlas
-
-### Regular Maintenance:
-- [ ] Update dependencies monthly: `npm update`
-- [ ] Check for vulnerabilities: `npm audit`
-- [ ] Rotate JWT_SECRET every 90 days
-- [ ] Review MongoDB Atlas logs weekly
-- [ ] Monitor Vercel function usage and costs
-
----
-
-## Automatic Deployments
-
-Vercel automatically deploys when you push to GitHub:
-- **Main branch** → Production deployment
-- **Other branches** → Preview deployment
-
-To deploy updates:
-```bash
-git add .
-git commit -m "Your update message"
-git push origin main
+// Coupon indexes
+db.coupons.createIndex({ code: 1 }, { unique: true })
+db.coupons.createIndex({ isActive: 1, validUntil: 1 })
 ```
 
-Wait 2-3 minutes, and your changes are live!
+## Step 8: Backup Strategy
 
----
+### MongoDB Backups
+1. MongoDB Atlas provides automatic backups
+2. Configure backup retention in Atlas
+3. Test restore procedures regularly
 
-## 🐛 Troubleshooting
+### Code Backups
+- GitHub repository (primary)
+- Enable branch protection
+- Regular commits and tags
 
-### Issue: "Database connection failed"
-**Solution:**
-1. Check ATLAS_URI in Vercel environment variables
-2. Verify MongoDB Atlas is not paused
-3. Check Network Access allows 0.0.0.0/0
-4. Review Vercel function logs for error details
+## Step 9: Custom Domain (Optional)
 
-### Issue: "CORS error" in browser console
-**Solution:**
-1. Verify FRONTEND_URL matches your Vercel domain
-2. Check Vercel deployment URL (with/without www)
-3. Review browser console for exact error
+1. Purchase domain (Namecheap, GoDaddy, etc.)
+2. Add domain in Vercel Dashboard
+3. Update DNS records:
+   - Type: CNAME
+   - Name: www
+   - Value: cname.vercel-dns.com
+4. Wait for SSL certificate provisioning
 
-### Issue: "Too many requests" (429 error)
-**Solution:**
-- This is rate limiting protection
-- Wait 15 minutes and try again
-- If legitimate traffic, adjust limits in `api/index.js`
+## Step 10: Continuous Integration
 
-### Issue: Slow API responses
-**Solution:**
-- First request may be slow (cold start)
-- Health checks should keep functions warm
-- Check MongoDB Atlas performance metrics
+Create `.github/workflows/deploy.yml`:
+```yaml
+name: Deploy to Production
 
-### Issue: Build fails on Vercel
-**Solution:**
-1. Check build logs in Vercel dashboard
-2. Ensure all dependencies are in `package.json`
-3. Verify TypeScript compiles: `npm run build` locally
-4. Check for missing environment variables
+on:
+  push:
+    branches: [main]
 
----
-
-## 📱 Local Development
-
-To run the full stack locally:
-
-```bash
-# Install dependencies
-npm install
-
-# Run both frontend and backend
-npm run dev:all
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
 ```
 
-This starts:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5000
+## Troubleshooting
+
+### Database Connection Issues
+- Check MongoDB Atlas IP whitelist
+- Verify connection string format
+- Check network access settings
+
+### CORS Errors
+- Verify FRONTEND_URL in environment variables
+- Check CORS configuration in server.cjs
+
+### Rate Limiting Issues
+- Adjust limits in server.cjs
+- Monitor Vercel function logs
+
+### Function Timeout
+- Vercel free tier: 10s limit
+- Optimize database queries
+- Add connection pooling
+
+## Production Checklist
+
+- [ ] Environment variables configured
+- [ ] MongoDB Atlas setup complete
+- [ ] CORS properly configured
+- [ ] Security headers enabled
+- [ ] Rate limiting active
+- [ ] SSL certificate provisioned
+- [ ] Health check endpoint working
+- [ ] Error tracking configured
+- [ ] Database indexes created
+- [ ] Backup strategy implemented
+- [ ] Monitoring alerts set up
+- [ ] Documentation updated
+
+## Maintenance
+
+### Regular Tasks
+- **Daily**: Monitor error logs
+- **Weekly**: Review performance metrics
+- **Monthly**: Update dependencies (`npm audit fix`)
+- **Quarterly**: Security audit, rotate secrets
+
+### Scaling Considerations
+- MongoDB Atlas: Upgrade cluster tier as needed
+- Vercel: Upgrade plan for higher limits
+- CDN: Consider Cloudflare for static assets
+- Database: Implement read replicas for high traffic
 
 ---
 
-## 🆘 Support
-
-### Resources:
-- **Vercel Docs**: https://vercel.com/docs
-- **MongoDB Atlas Docs**: https://docs.atlas.mongodb.com/
-- **Security Guide**: See `SECURITY.md` in this repo
-
-### Common Issues:
-- Review Vercel function logs
-- Check MongoDB Atlas monitoring
-- Inspect browser console errors
-- Verify all environment variables
-
----
-
-## ✅ Post-Deployment Checklist
-
-After successful deployment:
-- [ ] Test user registration
-- [ ] Test user login
-- [ ] Test protected routes
-- [ ] Verify database writes (create a ride/reward)
-- [ ] Check API health endpoint
-- [ ] Monitor first 24 hours for errors
-- [ ] Share app URL with team/users
-
----
-
-**🎉 Congratulations!** Your SustainAride app is now deployed with:
-- ✅ Automatic MongoDB connection
-- ✅ Enterprise-grade security
-- ✅ Encrypted data transmission
-- ✅ DDoS protection
-- ✅ Zero-downtime deployments
+**Need Help?** Check the [SECURITY.md](./SECURITY.md) for security best practices.

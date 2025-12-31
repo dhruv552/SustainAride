@@ -2,12 +2,12 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // API base URL - automatically detects environment
 const getApiUrl = () => {
-  // In production (Vercel), use the same domain
-  if (import.meta.env.PROD) {
-    return window.location.origin;
-  }
-  // In development, use localhost backend
-  return import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // In production (Vercel), use the same domain
+    if (import.meta.env.PROD) {
+        return window.location.origin;
+    }
+    // In development, use localhost backend
+    return import.meta.env.VITE_API_URL || 'http://localhost:5000';
 };
 
 const API_URL = getApiUrl();
